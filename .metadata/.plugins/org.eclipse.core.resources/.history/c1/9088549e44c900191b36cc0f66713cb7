@@ -1,0 +1,39 @@
+package com.sts3.board;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.vo.BoardMasterVO;
+
+@Service
+public class BoardDao {
+	Logger logger = Logger.getLogger(BoardDao.class);
+	@Autowired
+	private SqlSessionTemplate sqlSessionTemplate;
+	public List<Map<String, Object>> boardList(Map<String,Object> pMap) {
+		logger.info("called boardList:void");
+		logger.info(sqlSessionTemplate);
+		List<Map<String, Object>> boardList = new ArrayList<>();
+		boardList = sqlSessionTemplate.selectList("boardList", pMap);
+		return boardList;
+	}
+	public int getBmno() {
+		int bm_no = 0;
+		try {
+			bm_no = sqlSessionTemplate.selectOne("getBmno");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bm_no;
+	}
+	public void bmStepUpdate(BoardMasterVO bmVO) {
+		// TODO Auto-generated method stub
+		
+	}
+}

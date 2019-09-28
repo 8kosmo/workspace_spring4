@@ -1,0 +1,5 @@
+package com.sts3.board;
+
+public class BoardDao {
+
+}

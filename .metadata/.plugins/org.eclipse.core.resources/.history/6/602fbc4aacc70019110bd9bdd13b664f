@@ -1,0 +1,13 @@
+package com.sts3.sample;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class MemberController {
+	Logger logger = Logger.getLogger(MemberController.class);
+	//회원 등록 구현
+	public String memberAdd() {
+		return "memberAddOk.jsp";
+	}
+}

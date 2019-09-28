@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;spring4/WebContent/common/JEasyUICommon.jsp&apos; to &apos;UICommon.jsp&apos;" description="Rename resource &apos;JEasyUICommon.jsp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="WebContent/common/JEasyUICommon.jsp" name="UICommon.jsp" stamp="1566779851776" updateReferences="true"/>
+</session>

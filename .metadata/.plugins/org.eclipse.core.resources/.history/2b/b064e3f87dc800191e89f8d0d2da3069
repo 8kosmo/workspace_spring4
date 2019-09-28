@@ -1,0 +1,21 @@
+package com.sts3.board;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value="/board")
+public class RestBoardController {
+	Logger logger = Logger.getLogger(RestBoardController.class);
+	@GetMapping("jsonBoardList")
+	public String jsonBoardList(HttpServletResponse res) {
+		logger.info("called jsonBoardList:String");
+		String text = "jsonBoardList, 제이슨";
+		res.setContentType("text/html; charset=UTF-8");
+		return text;
+	}
+}

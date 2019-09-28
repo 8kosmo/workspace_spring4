@@ -1,0 +1,69 @@
+package com.sts3.board;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.vo.BoardMasterVO;
+import com.vo.BoardSubVO;
+@Service
+public class BoardLogic {
+	Logger logger = Logger.getLogger(BoardLogic.class);
+	@Autowired
+	private BoardDao boardDao;
+	public List<Map<String, Object>> boardList(Map<String, Object> pMap) {
+		logger.info("calld boardList(Map):void");
+		List<Map<String, Object>> boardList = null;
+		boardList = boardDao.boardList(pMap);
+		return boardList;
+	}
+	public int boardAdd(Map<String, Object> pMap) {
+		logger.info("called boardAdd(Map):int");
+		int bm_no = 0;
+		int bm_group = 0;
+		logger.info("pMap.get(\"bm_group\"): "+pMap.get("bm_group"));
+		if(pMap.get("bm_group")!=null) {
+			bm_group = Integer.parseInt(pMap.get("bm_group").toString());
+		}
+		int mresult = 0;
+		int sresult = 0;
+		bm_no = boardDao.getBmno();
+		BoardMasterVO bmVO = new BoardMasterVO();
+		BoardSubVO bsVO = new BoardSubVO();
+		bmVO.setBm_no(bm_no);
+		bmVO.setBm_title(pMap.get("bm_title").toString());
+		bmVO.setBm_writer(pMap.get("bm_writer").toString());
+		bmVO.setBm_email(pMap.get("bm_email").toString());
+		bmVO.setBm_content(pMap.get("bm_content").toString());
+		bmVO.setBm_pw(pMap.get("bm_pw").toString());
+		bmVO.setBm_group(bm_group);
+		bmVO.setBm_pos(Integer.parseInt(pMap.get("bm_pos").toString()));
+		bmVO.setBm_step(Integer.parseInt(pMap.get("bm_step").toString()));
+		if(bm_group>0) {//댓글 일 때
+			boardDao.bmStepUpdate(bmVO);
+			bmVO.setBm_pos(bmVO.getBm_pos()+1);			
+			bmVO.setBm_step(bmVO.getBm_step()+1);			
+		}
+		else {//새글 일때
+			bm_group = boardDao.getBmgroup();
+			bmVO.setBm_group(bm_group);
+			bmVO.setBm_pos(0);
+			bmVO.setBm_step(0);
+		}
+		//공통 처리부분
+		mresult = boardDao.boardMasterAdd(bmVO);
+		//첨부파일이 있을 때
+		if(pMap.get("bs_file")!=null && pMap.get("bs_file").toString().length()>1) {
+			bsVO.setBm_no(bm_no);
+			bsVO.setBs_file(pMap.get("bs_file").toString());
+			bsVO.setBs_size(Double.parseDouble(pMap.get("bs_size").toString()));
+			
+			sresult = boardDao.boardSubAdd(bsVO);
+			return sresult;
+		}
+		return mresult;
+	}
+}

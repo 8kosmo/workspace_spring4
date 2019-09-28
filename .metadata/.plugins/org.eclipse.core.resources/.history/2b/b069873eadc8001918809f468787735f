@@ -1,0 +1,18 @@
+package com.sts3.board;
+
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BoardDao {
+	Logger logger = Logger.getLogger(BoardDao.class);
+	@Autowired
+	private SqlSessionTemplate sqlSessionTemplate;
+	public void boardList(Map<String,Object> pMap) {
+		logger.info("called boardList:void");
+	}
+}

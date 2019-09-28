@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.MemberMapper">
+	<select id="boardList" parameterType="com.vo.BoardMasterVO" resultType="map">
+		select rno, bm_no, bm_title, bm_pw, bm_writer, bm_date, nvl(bs_file,' ') bs_file, bm_hit, bm_content, bm_email, bm_pos
+			,bm_hit,bm_group, bm_step
+		  from(
+		  		select rownum rno,bm.bm_no, bm.bm_title, bm.bm_pw, bm.bm_writer, bm.bm_content, bm.bm_email
+		             ,bm.bm_group, bm.bm_step, bm.bm_date, bs.bs_file, bm.bm_hit,bm.bm_pos
+		         from board_master_t bm,board_sub_t bs
+		        where bm.bm_no = bs.bm_no(+)
+	</select>
+</mapper> 

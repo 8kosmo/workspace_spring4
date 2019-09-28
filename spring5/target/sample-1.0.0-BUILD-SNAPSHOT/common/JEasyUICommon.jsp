@@ -1,0 +1,7 @@
+<link rel="stylesheet" type="text/css" href="../resources/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="../resources/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="../resources/demo/demo.css">
+<script type="text/javascript" src="../resources/js/jquery.min.js"></script>
+<script type="text/javascript" src="../resources/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../resources/js/commons.js"></script>
+<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>

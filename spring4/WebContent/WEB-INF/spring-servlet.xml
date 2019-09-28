@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	<bean id="default-handler-mapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+	<bean id="url-mapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/test/testList.sp4">test-controller</prop>
+				<prop key="/test/testAdd.sp4">test-controller</prop>
+				<prop key="/test/testUpd.sp4">test-controller</prop>
+				<prop key="/test/testDel.sp4">test-controller</prop>				
+				<prop key="/member/memberList.sp4">member-controller</prop>
+				<prop key="/member/memberList2.sp4">member-controller</prop>
+				<prop key="/member/memberList3.sp4">member-controller</prop>
+				<prop key="/erp/doEmp.sp4">emp-controller</prop>
+				<prop key="/erp/deptInsert.sp4">dept-controller</prop>
+			</props>
+		</property>
+	</bean>
+<!-- ERP<EMP,DEPT> -->
+	<bean id="dept-controller" class="com.erp.DeptController">
+		<property name="methodNameResolver" ref="dept-resolver"/>
+		<property name="deptLogic" ref="dept-logic"/>
+	</bean>
+	<bean id="dept-resolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+			<props>
+				<prop key="/erp/deptInsert.sp4">deptInsert</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="emp-controller" class="com.erp.EmpController">
+		<property name="methodNameResolver" ref="emp-resolver"/>
+		<property name="empLogic" ref="emp-logic"/>
+	</bean>
+		<bean id="emp-resolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+			<props>
+				<prop key="/erp/doEmp.sp4">doEmp</prop>
+			</props>
+		</property>
+	</bean>
+<!-- /ERP<EMP,DEPT> -->
+<!-- MemberList -->
+	<bean id="member-controller" class="com.test.MemberController">
+		<property name="methodNameResolver" ref="member-resolver"/>
+		<property name="memberLogic" ref="member-logic"/>
+	</bean>
+	<bean id="member-resolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+			<props>
+				<prop key="/member/memberList.sp4">memberList</prop>
+				<prop key="/member/memberList2.sp4">memberList2</prop>
+				<prop key="/member/memberList3.sp4">memberList3</prop>
+			</props>
+		</property>
+	</bean>
+<!-- /MemberList -->
+	<bean id="test-controller" class="com.test.TestController">
+		<property name="methodNameResolver" ref="test-resolver"/>
+		<property name="testLogic" ref="test-logic"/>
+	</bean>
+	<bean id="test-resolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+			<props>
+				<prop key="/test/testList.sp4">testList</prop>
+				<prop key="/test/testAdd.sp4">testAdd</prop>
+				<prop key="/test/testUpd.sp4">testUpd</prop>
+				<prop key="/test/testDel.sp4">testDel</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="/di/hello.sp4" class="com.di.HelloController"/>
+	<bean name="/di/insaList.sp4" class="com.di.ListController">
+		<property name="listBean">
+			<list>
+				<value>Hi!!!</value>
+				<value>Have a good time!!!</value>
+				<value>Have a nick day!!!</value>
+			</list>
+		</property>
+	</bean>
+<!-- 
+스프링에서는 XXXController가 응답받은 내용을 반드시 DispatcherServlet에게 전달해야 함.
+응답페이지에 대한 호출은 XXXController의 책임이 아니라 DispatcherServlet에서 요청처리 함.
+따라서 XXXController는 업무에 맞는 페이지 이름만 전달하면 됨.
+전달할 때는 ModelAndView에 담아서 전달함.
+ -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+</beans>

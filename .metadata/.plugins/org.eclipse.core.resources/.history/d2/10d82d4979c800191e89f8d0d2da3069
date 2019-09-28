@@ -1,0 +1,13 @@
+package com.sts3.board;
+
+import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class RestBoardController {
+	Logger logger = Logger.getLogger(RestBoardController.class);
+	public String jsonBoardList() {
+		String text = null;
+		return text;
+	}
+}

@@ -1,0 +1,10 @@
+package com.sts3.sample;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Restaurant {
+	@Autowired//chef의 setter메소드 없이 객체주입 가능
+	public Chef chef;
+}

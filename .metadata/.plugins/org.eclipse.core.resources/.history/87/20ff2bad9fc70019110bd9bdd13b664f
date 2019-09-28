@@ -1,0 +1,6 @@
+package com.sts3.sample;
+
+@Component
+public class Restaurant {
+
+}

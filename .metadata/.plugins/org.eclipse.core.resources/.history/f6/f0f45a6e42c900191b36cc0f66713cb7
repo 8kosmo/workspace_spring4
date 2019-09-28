@@ -1,0 +1,20 @@
+package com.sts3.board;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+@Service
+public class BoardLogic {
+	Logger logger = Logger.getLogger(BoardLogic.class);
+	@Autowired
+	private BoardDao boardDao;
+	public List<Map<String, Object>> boardList(Map<String, Object> pMap) {
+		logger.info("calld boardList(Map):void");
+		List<Map<String, Object>> boardList = null;
+		boardList = boardDao.boardList(pMap);
+		return boardList;
+	}
+}

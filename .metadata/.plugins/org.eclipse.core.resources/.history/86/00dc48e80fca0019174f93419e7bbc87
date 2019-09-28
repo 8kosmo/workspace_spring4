@@ -1,0 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<table border="1" width="1200"><tr>
+<%
+		for(int i=0;i<week.length;i++){ 
+			out.print("<td>"+week[i]+"</td>");
+		}
+		out.print("</tr>");
+		for(int i=0;i<cal.get(Calendar.WEEK_OF_MONTH);i++){
+			out.print("<tr>");
+			for(int j=0;j<7;++){
+				if(day[month][i][j]!=0){
+					out.print("<td>"+day[month][i][j]+"</td>");
+				}else{
+					out.print("<td>&nbsp;</td>");
+				}
+			}//end of inner for[주말일자]
+			out.print("</tr>");
+		}//end of outer for[월별일자]
+%>
+</tr></table>
+<%
+	}
+%>
+</body>
+</html>

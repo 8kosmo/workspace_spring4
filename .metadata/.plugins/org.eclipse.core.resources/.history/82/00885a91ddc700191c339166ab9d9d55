@@ -1,0 +1,9 @@
+package com.vo;
+
+public class MemberVO {
+	  MEM_ID       VARCHAR2(10 BYTE),
+	  MEM_PW       VARCHAR2(300 BYTE)               NOT NULL,
+	  MEM_NAME     VARCHAR2(30 BYTE)                NOT NULL,
+	  MEM_ADDR     VARCHAR2(200 BYTE),
+	  MEM_ZIPCODE  VARCHAR2(10 BYTE)
+}

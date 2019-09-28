@@ -1,0 +1,57 @@
+package com.sts3.board;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.google.gson.Gson;
+import com.vo.BoardMasterVO;
+
+@RestController
+@RequestMapping(value="/board", produces="text/plain; charset=UTF-8")
+public class RestBoardController {
+	Logger logger = Logger.getLogger(RestBoardController.class);
+	int tot = 0;
+	@Autowired
+	public BoardLogic boardLogic;
+	@RequestMapping(value="total.mvc", method=RequestMethod.GET)
+	public String total(BoardMasterVO bmVO, Model mod) {
+		logger.info("called total(bmVO):String");
+		tot = boardLogic.getTot(bmVO);
+		return String.valueOf(tot);
+	}
+	@GetMapping(value="jsonBoardList")
+	public String jsonBoardList() {
+		logger.info("called jsonBoardList:String");
+		String text = "jsonBoardList, 제길슨";
+		List<Map<String, Object>> memList = new ArrayList<>();
+		Map<String, Object> rMap = new HashMap<>();
+		rMap.put("mem_id", "test1");
+		rMap.put("mem_name", "과학");
+		rMap.put("mem_address", "과학실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test2");
+		rMap.put("mem_name", "수학");
+		rMap.put("mem_address", "교실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test3");
+		rMap.put("mem_name", "미술");
+		rMap.put("mem_address", "미술실");
+		memList.add(rMap);
+		Gson g = new Gson();
+		String meminfo = g.toJson(memList);
+		return meminfo;
+	}
+}

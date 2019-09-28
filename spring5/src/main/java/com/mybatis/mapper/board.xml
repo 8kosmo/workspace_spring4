@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.BoardMapper">
+<!-- 트랜잭션 처리 실습 코드 -->
+	<insert id="depInsert" parameterType="map">
+		insert into dept values(#{deptno},#{dname},#{loc})
+	</insert>
+	<insert id="empInsert" parameterType="map">
+		insert into emp(empno, ename, job, mgr, hiredate, sal, comm, deptno)
+				 values(#{empno},#{ename},#{job},#{mgr}
+				 	   ,to_char(sysdate,'YYYY-MM-DD'),#{sal},#{comm},#{deptno})
+	</insert>
+	<update id="hitCount" parameterType="int"><!-- 원시타입int를 사용할 경우 쿼리문에 변수 사용 못함 -->
+		update board_master_t
+		   set bm_hit = bm_hit+1
+		 where bm_no = #{value}
+	</update>
+	<select id="getTotal" parameterType="com.vo.BoardMasterVO" resultType="int">
+		select count(bm.bm_no)
+          from board_master_t bm,board_sub_t bs
+         where bm.bm_no = bs.bm_no(+)
+         <!-- 제목 검색 -->
+		 <if test="cb_search!=null and cb_search.equals('bm_title')">
+		 	AND bm.bm_title LIKE '%'||#{keyword}||'%'
+		 </if>
+		 <!-- 내용 검색 -->
+		 <if test="cb_search!=null and cb_search.equals('bm_content')">
+		 	AND bm.bm_content LIKE '%'||#{keyword}||'%'
+		 </if>
+		 <!-- 작성자 검색 -->
+		 <if test="cb_search!=null and cb_search.equals('bm_writer')">
+		 	AND bm.bm_writer LIKE '%'||#{keyword}||'%'
+		 </if>
+		 <!-- 날짜 검색 -->
+		 <if test="bm_date!=null and bm_date.length()>0">
+		 	AND bm.bm_date LIKE '%'||#{bm_date}||'%'
+		 </if>
+	</select>
+	<delete id="boardMasterDel" parameterType="com.vo.BoardMasterVO">
+		delete from board_master_t where bm_no = #{bm_no}
+	</delete>
+	<delete id="boardSubDel" parameterType="com.vo.BoardSubVO">
+		delete from board_sub_t where bm_no = #{bm_no}
+	</delete>
+	<delete id="boardMasterDelAll" parameterType="com.vo.BoardMasterVO">
+		delete from board_master_t 
+		 where bm_no IN
+		 	<foreach item="item" index="index" collection="list"
+		 			 open="(" separator="," close=")">
+		 			 #{item}
+		 			 </foreach>
+	</delete>
+	<delete id="boardSubDelAll" parameterType="com.vo.BoardSubVO">
+		delete from board_sub_t
+		 where bm_no IN
+		 	<foreach item="item" index="index" collection="list"
+		 			 open="(" separator="," close=")">
+		 			 #{item}
+		 			 </foreach>
+	</delete>
+	<update id="bmStepUpdate" parameterType="com.vo.BoardMasterVO">
+		update board_master_t
+		   set bm_step = bm_step+1
+		 where bm_group = #{bm_group}
+ 			<![CDATA[ and bm_step > #{bm_step} ]]>
+	</update>
+	<update id="boardMasterUpd" parameterType="com.vo.BoardMasterVO">
+		update board_master_t
+		   set bm_title = #{bm_title},
+		   	   bm_writer = #{bm_writer},
+		   	   bm_content = #{bm_content},
+		   	   bm_date = to_char(sysdate,'YYYY-MM-DD'),
+		   	   bm_pw = #{bm_pw},
+		   	   bm_email = #{bm_email}
+		 where bm_no = #{bm_no}
+	</update>
+	<update id="boardSubUpd" parameterType="com.vo.BoardSubVO">
+		update board_sub_t
+		   set bs_file = #{bs_file},
+		   	   bs_size = #{bs_size},
+		 where bm_no = #{bm_no}
+		   and bs_seq = #{bs_seq}
+	</update>
+	<insert id="boardSubAdd" parameterType="com.vo.BoardSubVO">
+		insert into board_sub_t(bm_no,bs_seq,bs_file,bs_size)
+                values(#{bm_no},1,#{bs_file},#{bs_size})
+	</insert>
+	<insert id="boardMasterAdd" parameterType="map">
+		<!-- <selectKey id="">select seq_board_no.nextval bm.no from dual</selectKey> -->
+		insert into board_master_t(bm_no, bm_title, bm_writer, bm_content
+								 ,bm_pw, bm_date, bm_email
+								 ,bm_group, bm_pos, bm_step)
+							values(#{bm_no}, #{bm_title},#{bm_writer},#{bm_content}
+								  ,#{bm_pw},to_char(sysdate,'YYYY-MM-DD'), #{bm_email}
+								  ,#{bm_group},#{bm_pos},#{bm_step})
+	</insert>
+	<select id="boardList" parameterType="map" resultType="map">
+		select rno, bm_no, bm_title, bm_pw, bm_writer, bm_date, nvl(bs_file,' ') bs_file, bm_hit, bm_content, bm_email, bm_pos
+			,bm_hit,bm_group, bm_step
+		  from(
+		  		select rownum rno,bm.bm_no, bm.bm_title, bm.bm_pw, bm.bm_writer, bm.bm_content, bm.bm_email
+		             ,bm.bm_group, bm.bm_step, bm.bm_date, bs.bs_file, bm.bm_hit,bm.bm_pos
+		         from board_master_t bm,board_sub_t bs
+		        where bm.bm_no = bs.bm_no(+)
+		         <!-- 제목 검색 -->
+				 <if test="cb_search!=null and cb_search.equals('bm_title')">
+				 	AND bm.bm_title LIKE '%'||#{keyword}||'%'
+				 </if>
+				 <!-- 내용 검색 -->
+				 <if test="cb_search!=null and cb_search.equals('bm_content')">
+				 	AND bm.bm_content LIKE '%'||#{keyword}||'%'
+				 </if>
+				 <!-- 작성자 검색 -->
+				 <if test="cb_search!=null and cb_search.equals('bm_writer')">
+				 	AND bm.bm_writer LIKE '%'||#{keyword}||'%'
+				 </if>
+				 <!-- 날짜 검색 -->
+				 <if test="bm_date!=null and bm_date.length()>0">
+				 	AND bm.bm_date LIKE '%'||#{bm_date}||'%'
+				 </if>
+		       ) a
+		 where 1=1
+		 <!-- 페이지 처리 -->
+		 <if test="bm_no>0">
+		 	and a.bm_no = #{bm_no}
+		 </if>
+		 <if test="start>0 and end>0">
+		 <!-- CDATA태그는 xml에서 제공하는 태그로 태그안에 있는 문자열을 무조건 text취급함.
+															예)>=, <= 등 -->
+		   <![CDATA[and a.rno between #{start} and #{end}]]>	 
+		 </if>
+		        order by bm_group desc, bm_step asc
+	</select>
+	<!-- 글번호 채번하기
+		시퀀스에 문제점 - 번호를 채번하고 마스터 테이블에 추가한 후 서브 테이블에 추가할 때 그 번호를 유지할 수 있는 방법이 없다.
+		왜냐하면 채번한 후에 현재 시퀸스 값을 확인할 수가 있는데 마스터 테이블에 insert하는 문장과 서브 테이블에 insert하는
+		문장이 같은 쿼리문에 있지 않으므로 시퀸스를 사용하는 것이 불가함.
+		따라서 글 번호를 max값을 이용해서 채번하고 1을 더하여 다음 번호를 채번하도록 한다.
+		만일 프로시저를 사용한다면 한 프로시저에서 처리하면 되니까 사용할 수 있을 것이다.
+		두번째, 글 그룹번호도 글번호와 같은 상황일 것이다. 시퀸스를 채번하여 사용하는 것이 아니라 원글에 대한 글그룹 번호를 가져와서
+		사용해야 하는데 채번하는 경우에는 에러가 발생하더라도 시퀀스 값은 무조건 새로운 값으로 채번이 일어나서 연속되는 번호를 가질 수
+		없게 될 것이다. 물론 연속값을 꼭 가져야 하는 것은 아니지만 여기서 일반 컬럼에 인덱스를 생성할 수 있다는 것을 활용해서 처리해본다.
+		 -->
+		 <select id="getBmno" parameterType="int" resultType="int">
+		 	select nvl((select /*+index_desc(board_master_t board_mno_pk)*/bm_no
+			              from board_master_t
+			             where rownum=1),0)+1 bm_no
+  			  from dual
+		 </select>
+		 <select id="getBmgroup" parameterType="int" resultType="int">
+			select nvl((select /*+index_desc(board_master_t i_group) */ bm_group 
+	                      from board_master_t
+	                     where rownum=1
+	                       and bm_group>0
+	                   ),0)+1 bm_group
+	  		 from dual
+		 </select>
+</mapper> 

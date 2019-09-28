@@ -1,0 +1,148 @@
+package com.sts3.board;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.vo.MemberVO;
+
+@Controller
+@RequestMapping(value="/board")
+public class BoardController {
+	Logger logger = Logger.getLogger(BoardController.class);
+	@Autowired
+	private BoardLogic boardLogic;
+	@RequestMapping(value="boardList.mvc", method=RequestMethod.GET)
+	public String boardList
+	(@RequestParam Map<String, Object> pMap, Model mod, HttpServletRequest req){
+		logger.info("called boardList(@RequestParam Map, mod, req):String");
+		logger.info("pageNumber : "+pMap.get("pageNumber"));
+		logger.info("pageSize: : "+pMap.get("pageSize"));
+		List<Map<String, Object>> boardList = null;
+		//페이지처리 초기값 담기
+		int pageNumber = 0;
+		int pageSize   = 0;
+		if(pMap.containsKey("pageNumber")) {
+			pageNumber = Integer.parseInt
+					(pMap.get("pageNumber").toString());
+		}
+		if(pMap.containsKey("pageSize")) {
+			pageSize = Integer.parseInt
+					(pMap.get("pageSize").toString());
+		}
+		boardList = boardLogic.boardList(pMap);
+		mod.addAttribute("boardList",boardList);
+		return "forward:boardListVer2.jsp";
+	}
+	@RequestMapping(value="boardAdd.mvc", method=RequestMethod.GET)
+	public String boardAdd(@RequestParam Map<String, Object> pMap) {
+		logger.info("called boardAdd(@RequestParam Map):String");
+		int result = 0;
+		result = boardLogic.boardAdd(pMap);
+		if(result == 1) {
+			return "redirect:/board/boardList.mvc";
+		}else {
+			return "redirect:/board/boardAddFail.jsp";
+		}
+	}
+
+	
+	//ViewResolver 사용
+	@RequestMapping(value="boardList.do", method=RequestMethod.GET)
+	public String boardList(Model mod) {
+	//public String boardList(MemberVO mVO) {
+		//http://localhost:8000/sample/board/boardList.do?mem_id=John
+		logger.info("called boardList:String");
+	//	logger.info("mem_id : "+mVO.getMem_id());//John
+		List<Map<String, Object>> memList = new ArrayList<>();
+		Map<String, Object> rMap = new HashMap<>();
+		rMap.put("mem_id", "test1");
+		rMap.put("mem_name", "김과학");
+		rMap.put("mem_address", "과학실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test2");
+		rMap.put("mem_name", "최수학");
+		rMap.put("mem_address", "교실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test3");
+		rMap.put("mem_name", "황미술");
+		rMap.put("mem_address", "미술실");
+		memList.add(rMap);
+		mod.addAttribute("memList",memList);
+		return "board/boardList";
+	}
+	//WEB-INF/views/board/*
+	//ViewResolver 사용
+	@RequestMapping(value="boardList4")
+	public String boardList4(@RequestParam Map<String, Object> pMap, Model mod) {
+		logger.info("called boardList4:ModelAndView");
+		logger.info("mem_id : "+pMap.get("mem_id"));
+		logger.info("mem_pw : "+pMap.get("mem_pw"));
+		ModelAndView mav = new ModelAndView();
+		List<Map<String, Object>> memList = new ArrayList<>();
+		Map<String, Object> rMap = new HashMap<>();
+		rMap.put("mem_id", "test1");
+		rMap.put("mem_name", "김과학");
+		rMap.put("mem_address", "과학실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test2");
+		rMap.put("mem_name", "최수학");
+		rMap.put("mem_address", "교실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test3");
+		rMap.put("mem_name", "황미술");
+		rMap.put("mem_address", "미술실");
+		memList.add(rMap);
+		mod.addAttribute("memList",memList);
+		return "board/boardList";
+	}
+	//webapp/board/*
+	//ViewResolver 사용하지않음
+	@GetMapping("boardList2")
+	public String boardList2() {
+		logger.info("called boardList2 - redirect");
+		return "redirect:boardList.jsp";
+	}
+	//webapp/board/*
+	//ViewResolver 사용하지않음
+	@PostMapping("boardList3")
+	public String boardList3(Model mod) {
+		logger.info("called boardList3 - forward");
+		List<Map<String, Object>> memList = new ArrayList<>();
+		Map<String, Object> rMap = new HashMap<>();
+		rMap.put("mem_id", "test1");
+		rMap.put("mem_name", "김과학");
+		rMap.put("mem_address", "과학실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test2");
+		rMap.put("mem_name", "최수학");
+		rMap.put("mem_address", "교실");
+		memList.add(rMap);
+		rMap = new HashMap<>();
+		rMap.put("mem_id", "test3");
+		rMap.put("mem_name", "황미술");
+		rMap.put("mem_address", "미술실");
+		memList.add(rMap);
+		mod.addAttribute("memList",memList);
+		return "forward:boardList.jsp";
+	}
+}

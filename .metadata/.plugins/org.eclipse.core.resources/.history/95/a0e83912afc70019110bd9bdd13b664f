@@ -1,0 +1,13 @@
+package com.sts3.sample;
+
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+public class MemberLogic {
+	Logger logger = Logger.getLogger(MemberLogic.class);
+
+	public void memberAdd(Map<String, Object> pMap) {
+		logger.info("memberAdd");
+	}
+}

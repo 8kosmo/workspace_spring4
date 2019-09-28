@@ -1,0 +1,17 @@
+package com.sts3.sample;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class MemberController {
+	Logger logger = Logger.getLogger(MemberController.class);
+	//회원 등록 구현
+	@RequestMapping(value="/member/memberAdd.do")
+	public String memberAdd() {
+		logger.info("memberAdd");
+		return "memberAddOk";//어느 경로를 바라보는 거지?
+	}
+}

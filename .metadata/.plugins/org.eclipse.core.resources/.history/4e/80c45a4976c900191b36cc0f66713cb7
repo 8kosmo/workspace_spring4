@@ -1,0 +1,107 @@
+package com.sts3.board;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.vo.BoardMasterVO;
+import com.vo.BoardSubVO;
+@Service
+public class BoardLogic {
+	Logger logger = Logger.getLogger(BoardLogic.class);
+	int total = 0;
+	@Autowired
+	private BoardDao boardDao;
+	public int getTot(BoardMasterVO bmVO) {
+		total = 0;
+		total = boardDao.getTotal(bmVO);
+		return total;
+	}
+	public List<Map<String, Object>> boardList(Map<String, Object> pMap) {
+		logger.info("calld boardList(Map):void");
+		List<Map<String, Object>> boardList = null;
+		BoardMasterVO bmVO = new BoardMasterVO();
+		total = getTot(bmVO);
+		//현재 바라보는 페이지 번호
+		int pageNumber = 0;//2
+		//한 페이지에 뿌려질 수
+		int pageSize = 0;//2
+		//시작번호
+		int start = 0;
+		//끝 번호
+		int end = 0;
+		/*
+		 * VO로 값을 받아서 전달할땐 타입체크를 따로 하지 않아도 되지만
+		 * Map으로 받아서 처리할 땐 타입체크를 해야 함.
+		 * 조인시에는 Map으로 사용하는 것이 좋겠고 (왜냐하면 파라미터에 주소번지 하나만 넘기면 되니까)
+		 * 테이블이 한 개일 경우에는 VO를 사용하는게 좋을 것이다.
+		 */
+		String spageNumber = null;
+		if(pMap.get("pageNumber")!=null) {
+			spageNumber = pMap.get("pageNumber").toString();
+			pageNumber = Integer.parseInt(spageNumber);
+		}
+		String spageSize = null;
+		if(pMap.get("pageSize")!=null) {
+			spageSize = pMap.get("pageSize").toString();
+			pageSize = Integer.parseInt(spageSize);
+		}
+		if(pageNumber>0) {
+			start = ((pageNumber-1)*pageSize)+1; //3
+			end = pageNumber * pageSize; //4
+			pMap.put("start",start);
+			if(end>total) {
+				pMap.put("end",total);
+			}else {
+				pMap.put("end",end);
+			}
+		}
+		logger.info("start:"+start+",end:"+end);
+		boardList = boardDao.boardList(pMap);
+		return boardList;
+	}
+	public int boardAdd(Map<String, Object> pMap) {
+		logger.info("called boardAdd(Map):int");
+		logger.info("pMap.get(\"bm_group\"): "+pMap.get("bm_group"));
+		int bm_no = 0;
+		int bm_group = 0;
+		if(pMap.get("bm_group")!=null) {
+			bm_group = Integer.parseInt(pMap.get("bm_group").toString());
+		}
+		int mresult = 0;
+		int sresult = 0;
+		bm_no = boardDao.getBmno();
+		pMap.put("bm_no",bm_no);
+		if(bm_group>0) {//댓글 일 때
+			boardDao.bmStepUpdate(pMap);
+			int pos = 0;
+			int step = 0;
+			if(pMap.get("bm_pos")!=null) {
+				pos = Integer.parseInt(pMap.get("bm_pos").toString());
+			}
+			pMap.put("bm_pos", pos+1);
+			if(pMap.get("bm_step")!=null) {
+				step = Integer.parseInt(pMap.get("bm_step").toString());
+			}
+			pMap.put("bm_step", step+1);	
+		}
+		else {//새글 일때
+			bm_group = boardDao.getBmgroup();
+			pMap.put("bm_group", bm_group);
+			pMap.put("bm_step", 0);
+			pMap.put("bm_pos", 0);
+		}
+		//공통 처리부분
+		mresult = boardDao.boardMasterAdd(pMap);
+		//첨부파일이 있을 때
+		if(pMap.get("bs_file")!=null && pMap.get("bs_file").toString().length()>1) {
+			pMap.put("bm_no", bm_no);
+			sresult = boardDao.boardSubAdd(bsVO);
+			return sresult;
+		}
+		return mresult;
+	}
+}

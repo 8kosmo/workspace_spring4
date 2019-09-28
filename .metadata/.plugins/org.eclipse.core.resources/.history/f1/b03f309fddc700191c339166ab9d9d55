@@ -1,0 +1,9 @@
+package com.vo;
+
+public class MemberVO {
+  Private String mem_id      = "";
+  Private String mem_pw      = "";
+  Private String mem_name    = "";
+  Private String mem_addr    = "";
+  Private String mem_zipcode = "";
+}

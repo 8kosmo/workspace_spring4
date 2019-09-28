@@ -1,0 +1,50 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.text.DecimalFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+<%
+	Calendar cal = Calendar.getInstance();
+	int day[][][] = new int[12][6][7];
+	String week[] = {"일","월","화","수","목","금","토"};
+	DecimalFormat df = new DecimalFormat("00");
+	//이번달은?
+	String cmonth = df.format(cal.get(Calendar.MONTH)+1);
+	int icmonth = Integer.parseInt(cmonth);
+	out.print("이번 달은 "+cmonth);
+%>
+	<center><h1><%=icmonth %>月</h1></center>
+	<div class="container-fluid">
+<%
+	for(int month=0;month<12;month++){
+		if(month==icmonth){
+			
+		}
+	}
+	for(int i=0;i<5;i++){
+%>
+		<div class="row">
+			<div class="col-lg bg-success" style="width:170px;height:95px">1 of 7</div>
+			<div class="col-lg bg-warning" style="width:170px;height:95px">2 of 7</div>
+			<div class="col-lg bg-success" style="width:170px;height:95px">3 of 7</div>
+			<div class="col-lg bg-warning" style="width:170px;height:95px">4 of 7</div>
+			<div class="col-lg bg-success" style="width:170px;height:95px">5 of 7</div>
+			<div class="col-lg bg-warning" style="width:170px;height:95px">6 of 7</div>
+			<div class="col-lg bg-success" style="width:170px;height:95px">7 of 7</div>
+		</div>
+<%
+	}
+%>
+</body>
+</html>

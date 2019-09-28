@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.MemberMapper">
+	<parameterMap type="java.util.Map" id="pMap">
+		<parameter mode="IN" jdbcType="VARCHAR" javaType="java.lang.String" property="mem_id"/>
+		<parameter mode="IN" jdbcType="VARCHAR" javaType="java.lang.String" property="mem_pw"/>
+		<parameter mode="IN" jdbcType="VARCHAR" javaType="java.lang.String" property="mem_name"/>
+		<parameter mode="IN" jdbcType="VARCHAR" javaType="java.lang.String" property="mem_addr"/>
+		<parameter mode="IN" jdbcType="VARCHAR" javaType="java.lang.String" property="mem_zipcode"/>
+	</parameterMap>
+<!-- 	<resultMap type="java.util.Map" id="rMap">
+		<result jdbcType="VARCHAR" javaType="java.lang.String" property="mem_id"/>
+	</resultMap> -->
+	<select id="memberList" parameterType="map" resultType="map">
+		select mem_id, mem_pw, mem_name, mem_addr, mem_zipcode from member
+	</select>
+	<select id="login" parameterType="map" resultType="map">
+		SELECT nvl((select mem_name
+					  from member
+					 where mem_id=#{mem_id}
+					   and mem_pw=#{mem_pw}),'로그인실패') mem_name
+		  FROM dual
+	</select>
+	<insert id="memberAdd" parameterMap="pMap">
+		INSERT INTO member(mem_id, mem_pw, mem_name, mem_addr, mem_zipcode)
+				values(#{mem_id},#{mem_pw},#{mem_name},#{mem_addr},#{mem_zipcode})
+	</insert>
+	
+	<select id="zdoList" parameterType="string" resultType="map">
+		SELECT distinct(zdo) zdo FROM zipcode_t
+	</select>
+	<select id="siguList" parameterType="string" resultType="map">
+		SELECT distinct(sigu) sigu FROM zipcode_t
+		 WHERE zdo=#{value}
+	</select>
+	<select id="dongList" parameterType="string" resultType="map">
+		SELECT distinct(dong) dong FROM zipcode_t
+		 WHERE sigu=#{value}
+	</select>
+</mapper> 

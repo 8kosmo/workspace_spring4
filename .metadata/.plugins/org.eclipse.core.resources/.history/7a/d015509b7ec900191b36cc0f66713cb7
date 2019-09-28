@@ -1,0 +1,87 @@
+package com.sts3.board;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.vo.BoardMasterVO;
+
+@Service
+public class BoardDao {
+	Logger logger = Logger.getLogger(BoardDao.class);
+	@Autowired
+	private SqlSessionTemplate sqlSessionTemplate;
+	public List<Map<String, Object>> boardList(Map<String,Object> pMap) {
+		logger.info("called boardList:void");
+		List<Map<String, Object>> boardList = new ArrayList<>();
+		boardList = sqlSessionTemplate.selectList("boardList", pMap);
+		return boardList;
+	}
+	public int getTotal(BoardMasterVO bmVO) {
+		logger.info("called getTotal(bmVO):int");
+		int tot = 0;
+		try {
+			tot = sqlSessionTemplate.selectOne("getTotal",bmVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tot;
+	}
+	public int getBmno() {
+		logger.info("called getBmno():int");
+		int bm_no = 0;
+		try {
+			bm_no = sqlSessionTemplate.selectOne("getBmno");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bm_no;
+	}
+	public int bmStepUpdate(Map<String, Object> pMap) {
+		logger.info("called bmStepUpdate(map):int");
+		int result = 0;
+		try {
+			result = sqlSessionTemplate.update("bmStepUpdate",pMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	public int getBmgroup() {
+		logger.info("called getBmgroup():int");
+		int bm_group = 0;
+		try {
+			bm_group = sqlSessionTemplate.selectOne("getBmgroup");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bm_group;
+	}
+	public int boardMasterAdd(Map<String, Object> pMap) {
+		logger.info("called boardMasterAdd(Map):int");
+		int result = 0;
+		try {
+			result = sqlSessionTemplate.update("boardMasterAdd",pMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	public int boardSubAdd(Map<String, Object> pMap) {
+		logger.info("called boardSubAdd(Map):int");
+		int result = 0;
+		try {
+			result = sqlSessionTemplate.update("boardSubAdd",pMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;		
+
+	}
+
+}

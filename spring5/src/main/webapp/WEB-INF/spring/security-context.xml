@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	">
+	<bean id="customAccessDenied" class="com.security.CustomAccessDeniedHandler"/>
+
+	<security:http>
+		<security:intercept-url pattern="/security/all" access="permitAll"/>
+<!-- /security/member라는 URI는 ROLE_MEMBER라는 권한이 있는 사용자만 접근 가능함. -->
+		<security:intercept-url pattern="/security/member" access="hasRole('ROLE_MEMBER')"/>
+		<security:intercept-url pattern="/security/admin" access="hasRole('ROLE_ADMIN')"/>
+		<!-- 스프링에서 제공하는 로그인 페이지 호출 -->
+		<security:form-login />
+		<!-- <security:form-login login-page="/security/customLogin"/> -->
+		<!-- <security:access-denied-handler error-page="/security/accessError"/> -->
+		<security:access-denied-handler ref="customAccessDenied"/>
+	</security:http>
+	<security:authentication-manager>
+		<security:authentication-provider>
+			<security:user-service>
+<!-- 패스 워드 인코딩 방식 없이 사용할 때 {noop}문자열을 추가함.
+	또 이 문자열을 추가하면 스프링 5.0부터 변경된 PasswordEncorder의 지정없어도 테스트가 가능함. -->
+				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER,ROLE_ADMIN"/>
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>

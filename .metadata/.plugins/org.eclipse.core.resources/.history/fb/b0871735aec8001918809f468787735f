@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.MemberMapper">
+	<select id="boardList" parameterType="com.vo.BoardMasterVO" resultType="map">
+		select rno, bm_no, bm_title, bm_pw, bm_writer, bm_date, nvl(bs_file,' ') bs_file, bm_hit, bm_content, bm_email, bm_pos
+			,bm_hit,bm_group, bm_step
+		  from(
+		  		select rownum rno,bm.bm_no, bm.bm_title, bm.bm_pw, bm.bm_writer, bm.bm_content, bm.bm_email
+		             ,bm.bm_group, bm.bm_step, bm.bm_date, bs.bs_file, bm.bm_hit,bm.bm_pos
+		         from board_master_t bm,board_sub_t bs
+		        where bm.bm_no = bs.bm_no(+)
+		         <!-- 제목 검색 -->
+				 <if test="cb_search!=null and cb_search.equals('bm_title')">
+				 	AND bm.bm_title LIKE '%'||#{keyword}||'%'
+				 </if>
+				 <!-- 내용 검색 -->
+				 <if test="cb_search!=null and cb_search.equals('bm_content')">
+				 	AND bm.bm_content LIKE '%'||#{keyword}||'%'
+				 </if>
+				 <!-- 작성자 검색 -->
+				 <if test="cb_search!=null and cb_search.equals('bm_writer')">
+				 	AND bm.bm_writer LIKE '%'||#{keyword}||'%'
+				 </if>
+				 <!-- 날짜 검색 -->
+				 <if test="bm_date!=null and bm_date.length()>0">
+				 	AND bm.bm_date LIKE '%'||#{bm_date}||'%'
+				 </if>
+		       ) a
+		 where 1=1
+		 <!-- 페이지 처리 -->
+		 <if test="bm_no>0">
+		 	and a.bm_no = #{bm_no}
+		 </if>
+		 <if test="start>0 and end>0">
+		 <!-- CDATA태그는 xml에서 제공하는 태그로 태그안에 있는 문자열을 무조건 text취급함.
+															예)>=, <= 등 -->
+		   <![CDATA[and a.rno between #{start} and #{end}]]>	 
+		 </if>
+		        order by bm_group desc, bm_step asc
+	</select>
+</mapper> 

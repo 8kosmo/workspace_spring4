@@ -1,0 +1,18 @@
+package com.sts3.board;
+
+import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value="/board")
+public class RestBoardController {
+	Logger logger = Logger.getLogger(RestBoardController.class);
+	@GetMapping("jsonBoardList")
+	public String jsonBoardList() {
+		logger.info("called jsonBoardList:String");
+		String text = "한글";
+		return text;
+	}
+}
